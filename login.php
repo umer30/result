@@ -3,20 +3,14 @@ session_start();
 
 // Security headers
 header('Content-Type: application/json');
-header('X-Content-Type-Options: nosniff');
-header('X-Frame-Options: DENY');
 header('X-XSS-Protection: 1; mode=block');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 
 // Prevent output before headers
 ob_start();
 
-// Include connection file
-require_once 'conn.php';
-
-$response = ['success' => false, 'message' => ''];
-
-// Include security class
+// Include database and security classes
+require_once 'config/database.php';
 require_once 'classes/Security.php';
 
 // Set security headers
@@ -24,6 +18,9 @@ Security::setSecurityHeaders();
 
 // Rate limiting check using Security class
 $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+$rate_limit_key = "rate_limit_" . $ip;
+$current_time = time();
+
 if (!Security::rateLimitCheck($ip, 5, 900)) {
     $response['message'] = 'Too many login attempts. Please try again later.';
     echo json_encode($response);
@@ -31,7 +28,6 @@ if (!Security::rateLimitCheck($ip, 5, 900)) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Increment attempt counter
     $_SESSION[$rate_limit_key]['count']++;
     $_SESSION[$rate_limit_key]['last_attempt'] = $current_time;
 
@@ -62,7 +58,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $response['message'] = 'Invalid Student ID format';
     } else {
         // Sanitize input
-        $student_id = filter_var($student_id, FILTER_SANITIZE_NUMBER_INT);
+        try {
+            $student_id = Security::validateStudentId($student_id);
+        } catch (Exception $e) {
+            $response['message'] = $e->getMessage();
+            echo json_encode($response);
+            exit;
+        }
+
+        // Get database connection
+        $db = DatabaseConfig::getInstance();
+        $conn = $db->getConnection();
 
         // Query to fetch student data with proper error handling
         $sql = "SELECT StudentID, Name, IsActive FROM tbl0_02StudentInfo WHERE StudentID = ? AND IsActive = 1";
@@ -71,10 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($stmt === false) {
             $errors = sqlsrv_errors();
-            $error_msg = "Database query failed";
+            $error_msg = "Something went wrong. Please try again or contact admin.";
             if (is_array($errors) && !empty($errors)) {
                 error_log("Login query error: " . print_r($errors, true));
-                // Check for specific database errors
                 if (strpos($errors[0]['message'], 'Invalid object name') !== false) {
                     $error_msg = "Database table not found. Please contact administrator.";
                 } elseif (strpos($errors[0]['message'], 'connection') !== false) {
@@ -112,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             sqlsrv_free_stmt($stmt);
         }
-        sqlsrv_close($conn);
+        // No need to close connection explicitly, as DatabaseConfig handles it
     }
 } else {
     $response['message'] = 'Invalid request method';

@@ -103,163 +103,16 @@ try {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MTB - Student Academic Dashboard</title>		
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MTB - Student Academic Portal</title>		
     <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
     <link rel="manifest" href="images/site.webmanifest">	
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #4F46E5;
-            --secondary: #10B981;
-            --accent: #F59E0B;
-            --dark: #1F2937;
-            --light: #F3F4F6;
-        }
+	<link rel="stylesheet" href="styles.css">
 
-        .bg-primary { background-color: var(--primary); }
-        .text-primary { color: var(--primary); }
-        .bg-secondary { background-color: var(--secondary); }
-        .text-secondary { color: var(--secondary); }
-        .bg-accent { background-color: var(--accent); }
-        .text-accent { color: var(--accent); }
-        .bg-dark { background-color: var(--dark); }
-        .text-dark { color: var(--dark); }
-
-        .attendance-chart {
-            height: 300px;
-        }
-
-        .animate-gradient {
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradient 6s ease infinite;
-        }
-
-        @keyframes gradient {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        .progress-ring__circle {
-            transition: stroke-dashoffset 0.35s;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
-        .modal {
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        .modal-hidden {
-            opacity: 0;
-            transform: translateY(-20px);
-            pointer-events: none;
-        }
-
-        .circle-bg {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .circle-bg::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 1000px;
-            height: 1000px;
-            background-image: repeating-radial-gradient(
-                circle,
-                rgba(255, 255, 255, 0.03) 1px,
-                transparent 10px
-            );
-            transform: translateX(-50%) translateY(-40%);
-            mask-image: linear-gradient(to bottom, transparent 0%, white 50%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, white 50%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .circle-bg > * {
-            position: relative;
-            z-index: 10;
-        }
-        @media (max-width: 1023px) {
-            .responsive-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-            
-            .overflow-x-auto table {
-                font-size: 0.875rem;
-            }
-            
-            .overflow-x-auto th,
-            .overflow-x-auto td {
-                padding: 0.5rem 0.25rem;
-            }
-            
-            .student-details {
-                display: none;
-            }
-            
-            .show-details-btn {
-                display: block;
-            }
-        }
-        
-        @media (max-width: 640px) {
-            main {
-                padding: 1rem;
-            }
-            
-            .overflow-x-auto table {
-                font-size: 0.75rem;
-            }
-            
-            .overflow-x-auto th,
-            .overflow-x-auto td {
-                padding: 0.375rem 0.125rem;
-                min-width: 60px;
-            }
-            
-            header h1 {
-                font-size: 1rem;
-            }
-            
-            header .flex {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-        }
-        
-        @media (min-width: 769px) {
-            .student-details {
-                display: block !important;
-            }
-            
-            .show-details-btn {
-                display: none !important;
-            }
-        }
-        
-        .modal {
-            z-index: 9999 !important;
-        }
-        
-        .modal .bg-gradient-to-br {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-    </style>
 </head>
 <body class="bg-gray-100 font-sans">
     <div class="min-h-screen">
@@ -303,55 +156,85 @@ try {
             <!-- Main Content -->
             <main class="container mx-auto px-4 py-4 sm:py-8">
                 <!-- Student Profile Section -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8 relative">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8 relative student-profile">
+                    <?php
+                    try {
+                        $student_profile = $student->getStudentInfo();
+                        if ($student_profile) {
+                            $photo = isset($student_profile['Student_Snap']) && !empty($student_profile['Student_Snap']) ? 'data:image/jpeg;base64,' . base64_encode($student_profile['Student_Snap']) : 'https://via.placeholder.com/150';
+                        } else {
+                            $student_profile = null;
+                        }
+                    } catch (Exception $e) {
+                        echo '<div class="text-red-500 font-bold text-center my-4">Error: ' . htmlspecialchars($e->getMessage()) . '</div>';
+                        $student_profile = null;
+                    }
+
+                    if ($student_profile) {
+                    ?>
+
                     <div class="md:flex">
-                        <div class="md:w-1/4 p-6 bg-gradient-to-br from-primary to-indigo-700 text-white flex flex-col items-center circle-bg rounded-xl shadow-md relative">
-                            <button id="showDetailsBtn" class="show-details-btn md:hidden absolute top-4 right-4 bg-white text-primary p-2 rounded-full hover:bg-gray-100 transition-all z-20">
-                                <i class="fas fa-info-circle"></i>
-                            </button>
-                            <?php 
-                            $photo = isset($student_data['Student_Snap']) && !empty($student_data['Student_Snap']) 
-                                ? 'data:image/jpeg;base64,' . base64_encode($student_data['Student_Snap']) 
-                                : 'https://via.placeholder.com/150';
-                            ?>
-                            <div class="w-32 h-32 rounded-full border-4 border-white mb-4 overflow-hidden">
-                                <img src="<?php echo $photo; ?>" alt="Student" class="w-full h-full object-cover">
-                            </div>
-                            <h2 class="text-base font-bold"><?php echo htmlspecialchars($student_data['Name']); ?></h2>
-                            <p class="text-indigo-200">
-                                <?php echo htmlspecialchars($student_data['ClassTitle'] ?? 'N/A'); ?> - 
-                                <?php echo htmlspecialchars($student_data['SectionTitle'] ?? 'N/A'); ?> - 
-                                <?php echo htmlspecialchars($student_data['GroupTitle'] ?? 'N/A'); ?>
-                            </p>
-                            <div class="mt-4 w-full student-details">
-                                <div class="flex justify-between text-sm mb-1">
-                                    <span>Student ID:</span>
-                                    <span class="font-semibold"><?php echo htmlspecialchars($student_data['StudentID']); ?></span>
-                                </div>
-                                <div class="flex justify-between text-sm mb-1">
-                                    <span>Registration No:</span>
-                                    <span class="font-semibold"><?php echo htmlspecialchars($student_data['RegistrationNumber'] ?? 'N/A'); ?></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="md:w-3/4 p-6 student-details hidden md:block">
+
+
+
+<div class="md:w-1/4 p-6 relative bg-gradient-custom text-white flex flex-col items-center rounded-xl shadow-md">
+
+
+    <button id="showDetailsBtn" 
+        class="tooltip show-details-btn md:hidden absolute top-2 right-2 bg-white text-primary p-2 rounded-full z-20 shadow-md"
+        data-tooltip="Show more student info">
+        <i class="fas fa-info-circle"></i>
+    </button>
+
+
+    <div class="w-[128px] h-[128px] sm:w-32 sm:h-32 rounded-full border-4 border-white mb-4 overflow-hidden z-10">
+        <img src="<?php echo $photo; ?>" alt="Student" class="w-full h-full object-cover">
+    </div>
+
+ 
+    <h2 class="text-base font-bold text-center z-10"><?php echo htmlspecialchars($student_profile['Name']); ?></h2>
+
+ 
+    <p class="text-indigo-200 text-center text-sm z-10">
+        <?php echo htmlspecialchars($student_profile['ClassTitle'] ?? 'N/A'); ?> -
+        <?php echo htmlspecialchars($student_profile['SectionTitle'] ?? 'N/A'); ?> -
+        <?php echo htmlspecialchars($student_profile['GroupTitle'] ?? 'N/A'); ?>
+    </p>
+
+
+    <div class="mt-4 w-full student-details z-10">
+        <div class="flex justify-between text-sm mb-1">
+            <span>Student ID:</span>
+            <span class="font-semibold"><?php echo htmlspecialchars($student_profile['StudentID']); ?></span>
+        </div>
+        <div class="flex justify-between text-sm mb-1">
+            <span>Registration No:</span>
+            <span class="font-semibold"><?php echo htmlspecialchars($student_profile['RegistrationNumber'] ?? 'N/A'); ?></span>
+        </div>
+    </div>
+</div>
+
+
+
+
+                        <div class="md:w-3/4 p-6 student-details">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-700 mb-2">Personal Information</h3>
                                     <div class="space-y-2">
-                                        <p><span class="text-gray-500">Father's Name:</span> <?php echo htmlspecialchars($student_data['FatherName'] ?? 'N/A'); ?></p>
-                                        <p><span class="text-gray-500">Mother's Name:</span> <?php echo htmlspecialchars($student_data['MotherName'] ?? 'N/A'); ?></p>
-                                        <p><span class="text-gray-500">Date of Birth:</span> <?php echo isset($student_data['DOB']) ? $student_data['DOB']->format('d-M-Y') : 'N/A'; ?></p>
-                                        <p><span class="text-gray-500">Address:</span> <?php echo htmlspecialchars($student_data['Address'] ?? 'N/A'); ?></p>
+                                        <p><span class="text-gray-500">Father's Name:</span> <?php echo htmlspecialchars($student_profile['FatherName'] ?? 'N/A'); ?></p>
+                                        <p><span class="text-gray-500">Mother's Name:</span> <?php echo htmlspecialchars($student_profile['MotherName'] ?? 'N/A'); ?></p>
+                                        <p><span class="text-gray-500">Date of Birth:</span> <?php echo isset($student_profile['DOB']) ? $student_profile['DOB']->format('d-M-Y') : 'N/A'; ?></p>
+                                        <p><span class="text-gray-500">Address:</span> <?php echo htmlspecialchars($student_profile['Address'] ?? 'N/A'); ?></p>
                                     </div>
                                 </div>
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-700 mb-2">Additional Details</h3>
                                     <div class="space-y-2">
-                                        <p><span class="text-gray-500">CNIC:</span> <?php echo htmlspecialchars($student_data['CNIC'] ?? 'N/A'); ?></p>
-                                        <p><span class="text-gray-500">Gender:</span> <?php echo htmlspecialchars($student_data['Gender'] ?? 'N/A'); ?></p>
-                                        <p><span class="text-gray-500">Level:</span> <?php echo htmlspecialchars($student_data['ClassLevel'] ?? 'N/A'); ?></p> 
-                                        <p><span class="text-gray-500">Session:</span> <?php echo htmlspecialchars($student_data['SessionTitle'] ?? 'N/A'); ?></p>                                                                            
+                                        <p><span class="text-gray-500">CNIC:</span> <?php echo htmlspecialchars($student_profile['CNIC'] ?? 'N/A'); ?></p>
+                                        <p><span class="text-gray-500">Gender:</span> <?php echo htmlspecialchars($student_profile['Gender'] ?? 'N/A'); ?></p>
+                                        <p><span class="text-gray-500">Level:</span> <?php echo htmlspecialchars($student_profile['ClassLevel'] ?? 'N/A'); ?></p> 
+                                        <p><span class="text-gray-500">Session:</span> <?php echo htmlspecialchars($student_profile['SessionTitle'] ?? 'N/A'); ?></p>                                                                            
                                     </div>
                                 </div>
                                 <div class="md:col-span-2">
@@ -359,15 +242,15 @@ try {
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <div class="bg-blue-100 p-3 rounded-lg">
                                             <p class="text-sm text-blue-600">Guardian Name: </p>
-                                            <p class="font-medium"><?php echo htmlspecialchars($student_data['GuardianName'] ?? 'N/A'); ?></p>
+                                            <p class="font-medium"><?php echo htmlspecialchars($student_profile['GuardianName'] ?? 'N/A'); ?></p>
                                         </div>
                                         <div class="bg-green-100 p-3 rounded-lg">
                                             <p class="text-sm text-green-600">Contact: </p>
-                                            <p class="font-medium"><?php echo htmlspecialchars($student_data['Mobile'] ?? 'N/A'); ?></p>
+                                            <p class="font-medium"><?php echo htmlspecialchars($student_profile['Mobile'] ?? 'N/A'); ?></p>
                                         </div>
                                         <div class="bg-purple-100 p-3 rounded-lg">
                                             <p class="text-sm text-purple-600">Father's CNIC: </p>
-                                            <p class="font-medium"><?php echo htmlspecialchars($student_data['FatherCNIC'] ?? 'N/A'); ?></p>
+                                            <p class="font-medium"><?php echo htmlspecialchars($student_profile['FatherCNIC'] ?? 'N/A'); ?></p>
                                         </div>
                                     </div>
                                 </div>
@@ -375,181 +258,198 @@ try {
                         </div>
                     </div>
 
-                    <!-- Student Details Modal -->
+<!-- Student Details Modal -->
                     <div id="studentModal" class="modal modal-hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-                        <div class="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-                            <div class="bg-gradient-to-br from-primary to-indigo-700 text-white p-4 rounded-t-xl flex justify-between items-center">
-                                <h3 class="text-lg font-bold">Student Details</h3>
-                                <button id="closeModalBtn" class="text-white hover:text-gray-200 p-2 rounded-full hover:bg-white/20 transition-all">
-                                    <i class="fas fa-times text-lg"></i>
-                                </button>
-                            </div>
-                            
+                        <div class="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+						
+						
                             <div class="p-6">
-                                <!-- Personal Information Section -->
-                                <div class="mb-6">
-                                    <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                        <i class="fas fa-user text-primary mr-2"></i>
-                                        Personal Information
-                                    </h4>
-                                    <div class="space-y-3">
-                                        <div class="bg-gray-50 p-3 rounded-lg">
-                                            <span class="text-gray-600 text-sm block">Father's Name</span>
-                                            <span class="font-semibold text-gray-800"><?php echo htmlspecialchars($student_data['FatherName'] ?? 'N/A'); ?></span>
+
+<div class="flex justify-between items-center mb-4 w-full px-4 mt-4">
+    <h3 class="text-xl font-bold text-gray-800">Student Details</h3>
+    <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
+        <i class="fas fa-times text-xl"></i>
+    </button>
+</div>
+								
+								
+								
+                                <?php if (isset($student_profile) && $student_profile) { ?>
+                                    <div class="space-y-4">
+
+<div class="bg-modal-gradient text-white p-4 rounded-lg flex flex-col items-center modal-content">
+
+
+    <div class="w-24 h-24 rounded-full border-4 border-white mb-3 overflow-hidden">
+        <img src="<?php echo $photo; ?>" alt="Student" class="w-full h-full object-cover">
+    </div>
+
+    <h2 class="text-lg font-bold text-center">
+        <?php echo htmlspecialchars($student_profile['Name']); ?>
+    </h2>
+
+    <p class="text-indigo-200 text-sm text-center">
+        <?php echo htmlspecialchars($student_profile['ClassTitle'] ?? 'N/A'); ?> - 
+        <?php echo htmlspecialchars($student_profile['SectionTitle'] ?? 'N/A'); ?>
+    </p>
+</div>
+
+
+
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div class="bg-gray-50 p-3 rounded-lg">
+                                                <p class="text-xs text-gray-500">Student ID</p>
+                                                <p class="font-medium"><?php echo htmlspecialchars($student_profile['StudentID']); ?></p>
+                                            </div>
+                                            <div class="bg-gray-50 p-3 rounded-lg">
+                                                <p class="text-xs text-gray-500">Registration No</p>
+                                                <p class="font-medium"><?php echo htmlspecialchars($student_profile['RegistrationNumber'] ?? 'N/A'); ?></p>
+                                            </div>
+                                            <div class="bg-gray-50 p-3 rounded-lg">
+                                                <p class="text-xs text-gray-500">Status</p>
+                                                <p class="font-medium"><?php echo $student_profile['IsActive'] ? 'Active' : 'Inactive'; ?></p>
+                                            </div>
+                                            <div class="bg-gray-50 p-3 rounded-lg">
+                                                <p class="text-xs text-gray-500">Father Name</p>
+                                                <p class="font-medium"><?php echo htmlspecialchars($student_profile['FatherName'] ?? 'N/A'); ?></p>
+                                            </div>
                                         </div>
-                                        <div class="bg-gray-50 p-3 rounded-lg">
-                                            <span class="text-gray-600 text-sm block">Mother's Name</span>
-                                            <span class="font-semibold text-gray-800"><?php echo htmlspecialchars($student_data['MotherName'] ?? 'N/A'); ?></span>
+                                        <div>
+                                            <h4 class="font-medium text-gray-700 mb-2">Personal Info</h4>
+                                            <div class="space-y-2 text-sm">
+                                                <p><span class="text-gray-500">Mother's Name:</span> <?php echo htmlspecialchars($student_profile['MotherName'] ?? 'N/A'); ?></p>
+                                                <p><span class="text-gray-500">DOB:</span> <?php echo isset($student_profile['DOB']) ? $student_profile['DOB']->format('d-M-Y') : 'N/A'; ?></p>
+                                                <p><span class="text-gray-500">Contact:</span> <?php echo htmlspecialchars($student_profile['Mobile'] ?? 'N/A'); ?></p>
+                                                <p><span class="text-gray-500">Address:</span> <?php echo htmlspecialchars($student_profile['Address'] ?? 'N/A'); ?></p>
+                                            </div>
                                         </div>
-                                        <div class="bg-gray-50 p-3 rounded-lg">
-                                            <span class="text-gray-600 text-sm block">Date of Birth</span>
-                                            <span class="font-semibold text-gray-800"><?php echo isset($student_data['DOB']) ? $student_data['DOB']->format('d-M-Y') : 'N/A'; ?></span>
+                                        <div>
+                                            <h4 class="font-medium text-gray-700 mb-2">Additional Info</h4>
+                                            <div class="space-y-2 text-sm">
+                                                <p><span class="text-gray-500">CNIC:</span> <?php echo htmlspecialchars($student_profile['CNIC'] ?? 'N/A'); ?></p>
+                                                <p><span class="text-gray-500">Gender:</span> <?php echo htmlspecialchars($student_profile['Gender'] ?? 'N/A'); ?></p>
+                                                <p><span class="text-gray-500">Level:</span> <?php echo htmlspecialchars($student_profile['ClassLevel'] ?? 'N/A'); ?></p>
+                                                <p><span class="text-gray-500">Session:</span> <?php echo htmlspecialchars($student_profile['SessionTitle'] ?? 'N/A'); ?></p>
+                                                <p><span class="text-gray-500">Group:</span> <?php echo htmlspecialchars($student_profile['GroupTitle'] ?? 'N/A'); ?></p>
+                                                <p><span class="text-gray-500">Class Status:</span> <?php echo $student_profile['ClassActive'] ? 'Active' : 'Inactive'; ?></p>
+                                                <p><span class="text-gray-500">Expelled:</span> <?php echo $student_profile['IsExpelled'] ? 'Yes' : 'No'; ?></p>
+                                            </div>
                                         </div>
-                                        <div class="bg-gray-50 p-3 rounded-lg">
-                                            <span class="text-gray-600 text-sm block">Address</span>
-                                            <span class="font-semibold text-gray-800"><?php echo htmlspecialchars($student_data['Address'] ?? 'N/A'); ?></span>
+                                        <div class="pt-4 border-t border-gray-200">
+                                            <button id="closeModalBtn2" class="w-full bg-primary text-white py-2 rounded-lg">Close</button>
                                         </div>
                                     </div>
-                                </div>
-
-                                <!-- Additional Details Section -->
-                                <div class="mb-6">
-                                    <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                        <i class="fas fa-info-circle text-primary mr-2"></i>
-                                        Additional Details
-                                    </h4>
-                                    <div class="space-y-3">
-                                        <div class="bg-gray-50 p-3 rounded-lg">
-                                            <span class="text-gray-600 text-sm block">CNIC</span>
-                                            <span class="font-semibold text-gray-800"><?php echo htmlspecialchars($student_data['CNIC'] ?? 'N/A'); ?></span>
-                                        </div>
-                                        <div class="bg-gray-50 p-3 rounded-lg">
-                                            <span class="text-gray-600 text-sm block">Gender</span>
-                                            <span class="font-semibold text-gray-800"><?php echo htmlspecialchars($student_data['Gender'] ?? 'N/A'); ?></span>
-                                        </div>
-                                        <div class="bg-gray-50 p-3 rounded-lg">
-                                            <span class="text-gray-600 text-sm block">Level</span>
-                                            <span class="font-semibold text-gray-800"><?php echo htmlspecialchars($student_data['ClassLevel'] ?? 'N/A'); ?></span>
-                                        </div>
-                                        <div class="bg-gray-50 p-3 rounded-lg">
-                                            <span class="text-gray-600 text-sm block">Session</span>
-                                            <span class="font-semibold text-gray-800"><?php echo htmlspecialchars($student_data['SessionTitle'] ?? 'N/A'); ?></span>
-                                        </div>
+                                <?php } else { ?>
+                                    <p class="text-gray-500 text-center">No student data available. Please log in.</p>
+                                    <div class="pt-4 border-t border-gray-200">
+                                        <button id="closeModalBtn2" class="w-full bg-primary text-white py-2 rounded-lg">Close</button>
                                     </div>
-                                </div>
-
-                                <!-- Guardian Information Section -->
-                                <div class="mb-6">
-                                    <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                        <i class="fas fa-users text-primary mr-2"></i>
-                                        Guardian Information
-                                    </h4>
-                                    <div class="space-y-3">
-                                        <div class="bg-blue-100 p-3 rounded-lg">
-                                            <p class="text-sm text-blue-600">Guardian Name: </p>
-                                            <p class="font-medium"><?php echo htmlspecialchars($student_data['GuardianName'] ?? 'N/A'); ?></p>
-                                        </div>
-                                        <div class="bg-green-100 p-3 rounded-lg">
-                                            <p class="text-sm text-green-600">Contact: </p>
-                                            <p class="font-medium"><?php echo htmlspecialchars($student_data['Mobile'] ?? 'N/A'); ?></p>
-                                        </div>
-                                        <div class="bg-purple-100 p-3 rounded-lg">
-                                            <p class="text-sm text-purple-600">Father's CNIC: </p>
-                                            <p class="font-medium"><?php echo htmlspecialchars($student_data['FatherCNIC'] ?? 'N/A'); ?></p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="pt-4 border-t border-gray-200">
-                                    <button id="closeModalBtn2" class="w-full bg-gradient-to-r from-primary to-indigo-600 hover:from-primary-dark hover:to-indigo-700 text-white py-3 rounded-lg font-medium transition-all shadow-md">
-                                        <i class="fas fa-times mr-2"></i>Close
-                                    </button>
-                                </div>
+                                <?php } ?>
                             </div>
                         </div>
                     </div>
+
+                    <?php                                
+                    } else {
+                        echo '<div class="text-red-500 font-bold text-center my-4">No student found with ID: ' . htmlspecialchars($student_id) . '</div>';
+                    }
+                    ?>     
                 </div>
 
-                <!-- Dashboard Grid -->
-                <div class="responsive-grid grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                    <!-- Attendance Summary -->
-                    <div class="bg-white p-6 rounded-xl shadow-md lg:col-span-1">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-semibold text-gray-800">Attendance Summary</h2>
-                            <span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">Current Year</span>
-                        </div>
 
-                        <?php
-                        $total_present = 0;
-                        $total_absent = 0;
-                        $total_leave = 0;
-                        $total_days = 0;
+				
+				
+				
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+    <!-- Attendance Summary -->
+  <div class="bg-white p-4 sm:p-6 rounded-xl shadow-md col-span-1 md:col-span-2 lg:col-span-1">
+<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-2 sm:space-y-0">
+    <h2 class="text-base sm:text-lg font-semibold text-gray-800">Attendance Summary</h2>
+    <span class="inline-flex items-center gap-1 text-xs bg-primary/10 text-primary px-2 py-1 rounded-full flex-shrink-0">
+        <!-- Calendar Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        Current Year
+    </span>
+</div>
 
-                        foreach ($attendance_data as $row) {
-                            $total_present += $row['PresentDays'];
-                            $total_absent += $row['AbsentDays'];
-                            $total_leave += $row['LeaveDays'];
-                            $total_days += $row['TotalDays'];
-                        }
-                        ?>
 
-                        <div class="flex justify-center mb-6">
-                            <div class="relative w-40 h-40">
-                                <svg class="w-full h-full" viewBox="0 0 100 100">
-                                    <circle class="text-gray-200" stroke-width="8" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" />
-                                    <circle class="progress-ring__circle text-secondary" stroke-width="8" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" 
-                                            stroke-dasharray="251.2" stroke-dashoffset="20.096" />
-                                </svg>
-                                <div class="absolute inset-0 flex items-center justify-center flex-col">
-                                    <span class="text-3xl font-bold text-gray-800">
-                                        <?php 
-                                        if ($total_days > 0) {
-                                            echo 100 - round(($total_absent / $total_days) * 100, 0) . "%";
-                                        } else {
-                                            echo "N/A";
-                                        }
-                                        ?>
-                                    </span>
-                                    <span class="text-xs text-gray-500">Attendance</span>
-                                </div>
-                            </div>
-                        </div>
+        <?php
+        $total_present = 0;
+        $total_absent = 0;
+        $total_leave = 0;
+        $total_days = 0;
 
-                        <div class="space-y-3">
-                            <div class="flex justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-3 h-3 rounded-full bg-secondary mr-2"></div>
-                                    <span class="text-sm">Present</span>
-                                </div>
-                                <span class="text-sm font-medium"><?php echo $total_present; ?> days</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
-                                    <span class="text-sm">Absent</span>
-                                </div>
-                                <span class="text-sm font-medium"><?php echo $total_absent; ?> days</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-3 h-3 rounded-full bg-accent mr-2"></div>
-                                    <span class="text-sm">Leaves</span>
-                                </div>
-                                <span class="text-sm font-medium"><?php echo $total_leave; ?> days</span>
-                            </div>
-                        </div>
-                    </div>
+        foreach ($attendance_data as $row) {
+            $total_present += $row['PresentDays'];
+            $total_absent += $row['AbsentDays'];
+            $total_leave += $row['LeaveDays'];
+            $total_days += $row['TotalDays'];
+        }
+        ?>
 
-                    <!-- Monthly Attendance Chart -->
-                    <div class="bg-white p-6 rounded-xl shadow-md lg:col-span-2">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-semibold text-gray-800">Monthly Attendance Record</h2>
-                        </div>
-                        <div class="attendance-chart">
-                            <canvas id="attendanceChart"></canvas>
-                        </div>
-                    </div>
+        <div class="flex justify-center mb-4 sm:mb-6">
+<div class="relative w-36 h-36 sm:w-40 sm:h-40 mx-auto">
+    <svg class="w-full h-full" viewBox="0 0 100 100">
+        <circle class="text-gray-200" stroke-width="8" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" />
+        <circle class="progress-ring__circle text-secondary" stroke-width="8" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" 
+                stroke-dasharray="251.2" stroke-dashoffset="20.096" />
+    </svg>
+    <div class="absolute inset-0 flex items-center justify-center flex-col text-center leading-tight">
+        <span class="text-xl sm:text-3xl font-bold text-gray-800 whitespace-nowrap">
+            <?php 
+            if ($total_days > 0) {
+                echo 100 - round(($total_absent / $total_days) * 100, 0) . "%";
+            } else {
+                echo "N/A";
+            }
+            ?>
+        </span>
+        <span class="text-xs text-gray-500">Attendance</span>
+    </div>
+</div>
+
+        </div>
+
+        <div class="space-y-2 sm:space-y-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-secondary mr-2 flex-shrink-0"></div>
+                    <span class="text-xs sm:text-sm">Present</span>
                 </div>
+                <span class="text-xs sm:text-sm font-medium"><?php echo $total_present; ?> days</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-red-500 mr-2 flex-shrink-0"></div>
+                    <span class="text-xs sm:text-sm">Absent</span>
+                </div>
+                <span class="text-xs sm:text-sm font-medium"><?php echo $total_absent; ?> days</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-accent mr-2 flex-shrink-0"></div>
+                    <span class="text-xs sm:text-sm">Leaves</span>
+                </div>
+                <span class="text-xs sm:text-sm font-medium"><?php echo $total_leave; ?> days</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Attendance Chart -->
+    <div class="bg-white p-4 sm:p-6 rounded-xl shadow-md col-span-1 md:col-span-2 lg:col-span-2">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-2 sm:space-y-0">
+            <h2 class="text-base sm:text-lg font-semibold text-gray-800">Monthly Attendance Record</h2>
+        </div>
+        <div class="attendance-chart h-48 sm:h-64 lg:h-auto">
+            <canvas id="attendanceChart"></canvas>
+        </div>
+    </div>
+</div>
+
+                
 
                 <!-- Academic Performance -->
                 <div id="results-table" class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
@@ -566,18 +466,18 @@ try {
                     </div>
 
                     <?php if (!empty($exam_results)) { ?>
-                        <div class="overflow-x-auto">
+                        <div class="overflow-x-auto mobile-table-wrapper">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight">Sr No</th>
-                                        <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight">Test</th>
-                                        <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight">Subject</th>
-                                        <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight">Date</th>
-                                        <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight">Obtained</th>
-                                        <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight">Total</th>
-                                        <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight">Percentage</th>
-                                        <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight">Status</th>
+                                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight">Sr</th>
+                                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight">Test</th>
+                                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight">Subject</th>
+                                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight mobile-hide">Date</th>
+                                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight">Marks</th>
+                                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight mobile-hide">Total</th>
+                                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight">%</th>
+                                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider leading-tight">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="results-tbody" class="bg-white divide-y divide-gray-200">
@@ -654,47 +554,11 @@ try {
 
                 <!-- Subject-wise Performance Analysis -->
                 <?php 
-                // Get subject-wise analysis data using direct SQL query
+
                 $subject_analysis = [];
                 if ($class_student_id) {
                     try {
-                        $sql_subject_analysis = "
-                            SELECT 
-                                s.SubjectID,
-                                s.Title AS SubjectName,
-                                SUM(CASE WHEN esd.ObtainedMarks IS NOT NULL THEN esd.ObtainedMarks ELSE 0 END) AS TotalObtained,
-                                SUM(esd.TotalMarks) AS TotalMarks,
-                                MAX(CASE WHEN lt.rn = 1 THEN esd.ObtainedMarks END) AS LastObtainedMarks,
-                                MAX(CASE WHEN lt.rn = 1 THEN esd.TotalMarks END) AS LastTotalMarks
-                            FROM tbl1_10ExamStudentDetail e
-                            JOIN tbl1_05ClassStudent cs ON e.ClassStudentID = cs.ClassStudentID
-                            JOIN tbl1_11ExamSubjectsDetail esd ON e.ExamDetailID = esd.ExamDetailID
-                            JOIN tbl0_08SubjectInfo s ON esd.SubjectID = s.SubjectID
-                            JOIN tbl1_09ExamMaster em ON e.ExamID = em.ExamID
-                            JOIN (
-                                SELECT 
-                                    esd2.ExamDetailID,
-                                    esd2.SubjectID,
-                                    ROW_NUMBER() OVER (PARTITION BY esd2.SubjectID ORDER BY esd2.PaperDate DESC, em2.ExamDate DESC) AS rn
-                                FROM tbl1_11ExamSubjectsDetail esd2
-                                JOIN tbl1_10ExamStudentDetail e2 ON esd2.ExamDetailID = e2.ExamDetailID
-                                JOIN tbl1_09ExamMaster em2 ON e2.ExamID = em2.ExamID
-                                WHERE e2.ClassStudentID = ? AND esd2.PaperDate IS NOT NULL
-                            ) lt ON esd.ExamDetailID = lt.ExamDetailID AND esd.SubjectID = lt.SubjectID
-                            WHERE cs.ClassStudentID = ?
-                            GROUP BY s.SubjectID, s.Title
-                            ORDER BY s.Title";
-                        
-                        $params_subject_analysis = array($class_student_id, $class_student_id);
-                        $stmt_subject_analysis = sqlsrv_query($conn, $sql_subject_analysis, $params_subject_analysis);
-
-                        if ($stmt_subject_analysis !== false) {
-                            while ($row = sqlsrv_fetch_array($stmt_subject_analysis, SQLSRV_FETCH_ASSOC)) {
-                                $subject_analysis[] = $row;
-                            }
-                            sqlsrv_free_stmt($stmt_subject_analysis);
-                        }
-
+                        $subject_analysis = $student->getSubjectWiseAnalysis($class_student_id);
                     } catch (Exception $e) {
                         error_log("Subject analysis error: " . $e->getMessage());
                         $subject_analysis = [];
@@ -702,18 +566,18 @@ try {
                 }
                 ?>
 
-                <!-- Subject styles for icons and colors -->
+
                 <?php
                 $subject_styles = [
                     'Physics' => ['icon' => 'fas fa-atom', 'text' => 'text-green-600', 'bg' => 'bg-green-100', 'bar' => 'bg-green-600'],
                     'Chemistry' => ['icon' => 'fas fa-flask', 'text' => 'text-purple-600', 'bg' => 'bg-purple-100', 'bar' => 'bg-purple-600'],
-                    'English' => ['icon' => 'fas fa-language', 'text' => 'text-red-600', 'bg' => 'bg-red-100', 'bar' => 'bg-red-600'],
-                    'Mathematics' => ['icon' => 'fas fa-square-root-alt', 'text' => 'text-blue-600', 'bg' => 'bg-blue-100', 'bar' => 'bg-blue-600'],
+                    'English' => ['icon' => 'fas fa-language', 'text' => 'text-red-800', 'bg' => 'bg-red-300', 'bar' => 'bg-red-600'],
+                    'Mathematics' => ['icon' => 'fas fa-square-root-alt', 'text' => 'text-pink-600', 'bg' => 'bg-pink-100', 'bar' => 'bg-pink-400'],
                     'Biology' => ['icon' => 'fas fa-dna', 'text' => 'text-teal-600', 'bg' => 'bg-teal-100', 'bar' => 'bg-teal-600'],
-                    'Urdu' => ['icon' => 'fas fa-pen-nib', 'text' => 'text-yellow-600', 'bg' => 'bg-yellow-100', 'bar' => 'bg-yellow-600'],
+                    'Urdu' => ['icon' => 'fas fa-pen-nib', 'text' => 'text-yellow-800', 'bg' => 'bg-yellow-100', 'bar' => 'bg-yellow-800'],
                     'Drawing' => ['icon' => 'fas fa-paint-brush', 'text' => 'text-pink-600', 'bg' => 'bg-pink-100', 'bar' => 'bg-pink-600'],
                     'Islamiat' => ['icon' => 'fas fa-mosque', 'text' => 'text-emerald-600', 'bg' => 'bg-emerald-100', 'bar' => 'bg-emerald-600'],
-                    'Pakistan Studies' => ['icon' => 'fas fa-map-marked', 'text' => 'text-lime-600', 'bg' => 'bg-lime-100', 'bar' => 'bg-lime-600'],
+                    'Pakistan Studies' => ['icon' => 'fas fa-map-marked', 'text' => 'text-yellow-300', 'bg' => 'bg-yellow-100', 'bar' => 'bg-yellow-300'],
                     'General Science' => ['icon' => 'fas fa-microscope', 'text' => 'text-cyan-600', 'bg' => 'bg-cyan-100', 'bar' => 'bg-cyan-600'],
                     'General Knowledge' => ['icon' => 'fas fa-globe', 'text' => 'text-amber-600', 'bg' => 'bg-amber-100', 'bar' => 'bg-amber-600'],
                     'Rhymes' => ['icon' => 'fas fa-music', 'text' => 'text-rose-600', 'bg' => 'bg-rose-100', 'bar' => 'bg-rose-600'],
@@ -732,7 +596,7 @@ try {
                     'Political Science' => ['icon' => 'fas fa-balance-scale', 'text' => 'text-amber-700', 'bg' => 'bg-amber-200', 'bar' => 'bg-amber-700'],
                     'Health & Physical Education' => ['icon' => 'fas fa-heartbeat', 'text' => 'text-red-400', 'bg' => 'bg-red-50', 'bar' => 'bg-red-400'],
                     'Education' => ['icon' => 'fas fa-graduation-cap', 'text' => 'text-cyan-700', 'bg' => 'bg-cyan-200', 'bar' => 'bg-cyan-700'],
-                    'Tarjuma-tul-Quran' => ['icon' => 'fas fa-mosque', 'text' => 'text-cyan-700', 'bg' => 'bg-cyan-200', 'bar' => 'bg-cyan-700'],
+                    'Tarjuma-tul-Quran' => ['icon' => 'fas fa-mosque', 'text' => 'text-green-700', 'bg' => 'bg-green-200', 'bar' => 'bg-green-700'],
                     'default' => ['icon' => 'fas fa-book', 'text' => 'text-gray-500', 'bg' => 'bg-gray-100', 'bar' => 'bg-gray-500']
                 ];
                 ?>
@@ -782,7 +646,7 @@ try {
                     <?php } ?>
                 </div>
 
-                
+
 
                 <!-- Fee Schedule Section -->
                 <div class="bg-white rounded-xl shadow-md overflow-hidden">
@@ -794,7 +658,7 @@ try {
                     </div>
 
                     <?php if (!empty($fee_results)) { ?>
-                        <div class="ml-2 w-full overflow-x-auto">
+                        <div class="ml-2 w-full overflow-x-auto mobile-table-wrapper">
                             <table class="min-w-full divide-y divide-gray-200 table-auto">
                                 <thead class="bg-gray-50">
                                     <tr>
@@ -826,13 +690,19 @@ try {
                 </div>
             </main>
 
-            <!-- Footer -->
-            <footer class="bg-dark text-white">
-                <div class="flex items-center justify-center h-16 border-t border-gray-800 text-sm text-gray-400 text-center">
-                    © 2025 MTB Schools & Colleges. All rights reserved. | Designed with 
-                    <i class="fas fa-heart text-red-500 mx-1"></i> for education
-                </div>
-            </footer>
+
+<footer class="bg-dark text-white">
+  <div class="flex flex-wrap items-center justify-center h-auto py-4 px-2 border-t border-gray-800 text-sm text-gray-400 text-center">
+    © 2025 MTB Schools & Colleges. All rights reserved.
+    
+
+    <span class="block sm:inline w-full sm:w-auto mt-1 sm:mt-0">
+      Designed with 
+      <i class="fas fa-heart text-red-500 mx-1"></i> for education
+    </span>
+  </div>
+</footer>
+
 
         <?php } else { ?>
             <div class="text-red-500 font-bold text-center my-4">No Student data found. Please log in.</div>
@@ -840,11 +710,12 @@ try {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <script>
         // Data arrays for lazy loading
         const examResults = <?php echo json_encode($exam_results ?? []); ?>;
         const feeResults = <?php echo json_encode(array_map(function($fee) {
-            // Convert DateTime objects to strings for JSON
+
             if (isset($fee['FeeDueDate']) && is_object($fee['FeeDueDate'])) {
                 $fee['FeeDueDate'] = $fee['FeeDueDate']->format('d-M-Y');
             }
@@ -856,31 +727,34 @@ try {
 
         let currentExamIndex = 0;
         let currentFeeIndex = 0;
-        const itemsPerLoad = 3; // Load 3 items at a time
+        const itemsPerLoad = 3; 
         let isLoading = false;
 
-        // Status classes mapping
+   
         const statusClasses = {
-            'Outstanding': 'bg-purple-100 text-purple-800',
-            'Excellent': 'bg-green-100 text-green-800',
-            'Very Good': 'bg-blue-100 text-blue-800',
-            'Good': 'bg-blue-100 text-blue-800',
-            'Average': 'bg-yellow-100 text-yellow-800',
-            'Satisfactory': 'bg-yellow-100 text-yellow-800',
-            'Low': 'bg-red-100 text-red-800',
-            'Fail': 'bg-red-100 text-red-800',
-            'Absent': 'bg-gray-100 text-gray-800',
-            'N/A': 'bg-gray-100 text-gray-800'
+            'Outstanding': 'bg-purple-100 text-purple-800 border border-purple-300',
+            'Excellent': 'bg-green-100 text-green-800 border border-green-300',
+            'Very Good': 'bg-blue-100 text-blue-800 border border-blue-300',
+            'Good': 'bg-blue-100 text-blue-800 border border-blue-300',
+            'Average': 'bg-yellow-100 text-yellow-800 border border-yellow-300',
+            'Satisfactory': 'bg-yellow-100 text-yellow-800 border border-yellow-300',
+            'Low': 'bg-red-100 text-red-800 border border-red-300',
+            'Fail': 'bg-red-100 text-red-800 border border-red-300',
+            'Absent': 'bg-gray-100 text-gray-800 border border-gray-300',
+            'N/A': 'bg-gray-100 text-gray-800 border border-gray-300'
         };
+		
+		
+		
 
-        // Function to load exam results progressively
+
         function loadMoreExamResults() {
             if (isLoading || currentExamIndex >= examResults.length) return;
 
             isLoading = true;
             document.getElementById('loading-indicator').classList.remove('hidden');
 
-            setTimeout(() => { // Simulate loading delay
+            setTimeout(() => { 
                 const tbody = document.getElementById('results-tbody');
                 const endIndex = Math.min(currentExamIndex + itemsPerLoad, examResults.length);
 
@@ -891,20 +765,24 @@ try {
                     const row = document.createElement('tr');
                     row.className = 'opacity-0 transform translate-y-4 transition-all duration-500';
                     row.innerHTML = `
-                        <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900 leading-tight">${i + 1}</td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900 leading-tight">${exam.ExamType || 'N/A'}</td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900 leading-tight">${exam.SubjectName || 'N/A'}</td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 leading-tight">${exam.ExamDate || 'N/A'}</td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 leading-tight">${exam.ObtainedMarks !== null ? exam.ObtainedMarks : 'Absent'}</td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 leading-tight">${exam.TotalMarks || 0}</td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 leading-tight">${exam.Percentage || 0}%</td>
-                        <td class="px-4 py-2 whitespace-nowrap">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full ${statusClass}">${exam.Status || 'N/A'}</span>
+                        <td class="px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-900 leading-tight">${i + 1}</td>
+                        <td class="px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-900 leading-tight">${exam.ExamType || 'N/A'}</td>
+                        <td class="px-2 py-2 whitespace-nowrap text-sm font-medium text-gray-500 leading-tight">${exam.SubjectName || 'N/A'}</td>
+                        <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500 leading-tight mobile-hide">${exam.ExamDate || 'N/A'}</td>
+                        <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-900 leading-tight">
+                            <div class="flex flex-col">
+                                <span>${exam.ObtainedMarks !== null ? exam.ObtainedMarks : 'Absent'}</span>
+                                <span class="text-xs text-gray-400 md:hidden">/${exam.TotalMarks || 0}</span>
+                            </div>
                         </td>
-                    `;
+                        <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500 leading-tight mobile-hide">${exam.TotalMarks || 0}</td>
+                        <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-900 leading-tight">${exam.Percentage || 0}%</td>
+                        <td class="px-2 py-2 whitespace-nowrap">
+                            <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 text-xs font-semibold rounded-full ${statusClass}">${exam.Status || 'N/A'}</span>
+						</td>`;
                     tbody.appendChild(row);
 
-                    // Trigger animation
+
                     setTimeout(() => {
                         row.classList.remove('opacity-0', 'translate-y-4');
                     }, 50);
@@ -941,7 +819,7 @@ try {
             });
         }
 
-        
+
 
         // Function to load fee results progressively
         function loadMoreFeeResults() {
@@ -950,7 +828,7 @@ try {
             isLoading = true;
             document.getElementById('fee-loading-indicator').classList.remove('hidden');
 
-            setTimeout(() => { // Simulate loading delay
+            setTimeout(() => { 
                 const tbody = document.getElementById('fee-tbody');
                 const endIndex = Math.min(currentFeeIndex + itemsPerLoad, feeResults.length);
 
@@ -981,7 +859,7 @@ try {
                     `;
                     tbody.appendChild(row);
 
-                    // Trigger animation
+                 
                     setTimeout(() => {
                         row.classList.remove('opacity-0', 'translate-y-4');
                     }, 50);
@@ -996,77 +874,92 @@ try {
 
         // Attendance Chart
         const ctx = document.getElementById('attendanceChart').getContext('2d');
-        const attendanceChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: [<?php 
-                    foreach ($attendance_data as $monthNum => $row) {
-                        echo "'" . date('M', mktime(0, 0, 0, $monthNum, 1)) . "',";
+const attendanceChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [<?php 
+            foreach ($attendance_data as $monthNum => $row) {
+                echo "'" . date('M', mktime(0, 0, 0, $monthNum, 1)) . "',";
+            }
+        ?>],
+        datasets: [
+            {
+                label: 'Present',
+                data: [<?php 
+                    foreach ($attendance_data as $row) {
+                        echo $row['PresentDays'] . ",";
                     }
                 ?>],
-                datasets: [
-                    {
-                        label: 'Present',
-                        data: [<?php 
-                            foreach ($attendance_data as $row) {
-                                echo $row['PresentDays'] . ",";
-                            }
-                        ?>],
-                        backgroundColor: '#10B981',
-                        borderRadius: 4
-                    },
-                    {
-                        label: 'Absent',
-                        data: [<?php 
-                            foreach ($attendance_data as $row) {
-                                echo $row['AbsentDays'] . ",";
-                            }
-                        ?>],
-                        backgroundColor: '#EF4444',
-                        borderRadius: 4
-                    },
-                    {
-                        label: 'Leaves',
-                        data: [<?php 
-                            foreach ($attendance_data as $row) {
-                                echo $row['LeaveDays'] . ",";
-                            }
-                        ?>],
-                        backgroundColor: '#F59E0B',
-                        borderRadius: 4
-                    }
-                ]
+                backgroundColor: '#10B981',
+                borderRadius: 4
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
+            {
+                label: 'Absent',
+                data: [<?php 
+                    foreach ($attendance_data as $row) {
+                        echo $row['AbsentDays'] . ",";
                     }
+                ?>],
+                backgroundColor: '#EF4444',
+                borderRadius: 4
+            },
+            {
+                label: 'Leaves',
+                data: [<?php 
+                    foreach ($attendance_data as $row) {
+                        echo $row['LeaveDays'] . ",";
+                    }
+                ?>],
+                backgroundColor: '#F59E0B',
+                borderRadius: 4
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+
+            datalabels: {
+                color: '#000',
+                anchor: 'end',
+                align: 'end',
+                font: {
+                    weight: 'bold',
+                    size: 12
                 },
-                scales: {
-                    x: {
-                        stacked: false,
-                        grid: {
-                            display: false
-                        }
-                    },
-                    y: {
-                        stacked: false,
-                        beginAtZero: true,
-                        max: 25,
-                        ticks: {
-                            stepSize: 5
-                        }
-                    }
+                formatter: function(value) {
+                    return value;
+                }
+            },
+            legend: {
+                position: 'top',
+            },
+            tooltip: {
+                mode: 'index',
+                intersect: false,
+            }
+        },
+        scales: {
+            x: {
+                stacked: false,
+                grid: {
+                    display: false
+                }
+            },
+            y: {
+                stacked: false,
+                beginAtZero: true,
+                max: 25,
+                ticks: {
+                    stepSize: 5
                 }
             }
-        });
+        }
+    },
+    plugins: [ChartDataLabels] 
+});
+
 
         // Intersection Observer for infinite scroll
         function createInfiniteScroll() {
@@ -1108,9 +1001,9 @@ try {
             }
         }
 
-        // Main initialization
+
         document.addEventListener('DOMContentLoaded', function() {
-            // Progress rings
+
             const circles = document.querySelectorAll('.progress-ring__circle');
             circles.forEach(circle => {
                 const radius = circle.r.baseVal.value;
@@ -1120,7 +1013,7 @@ try {
                 circle.style.strokeDashoffset = offset;
             });
 
-            // Student Details Modal
+ 
             const studentModal = document.getElementById('studentModal');
             const showBtn = document.getElementById('showDetailsBtn');
             const closeStudentModalBtns = document.querySelectorAll('#closeModalBtn, #closeModalBtn2');
@@ -1143,7 +1036,7 @@ try {
                 }
             });
 
-            // View All Modal
+
             const viewAllModal = document.getElementById('viewAllModal');
             const viewAllBtn = document.getElementById('viewAllBtn');
             const closeViewAllBtn = document.getElementById('closeViewAllBtn');
@@ -1167,7 +1060,7 @@ try {
                 printReportBtn.addEventListener('click', () => {
                     const printContent = document.getElementById('printableContent').innerHTML;
                     const originalContent = document.body.innerHTML;
-                    
+
                     document.body.innerHTML = `
                         <style>
                             @media print {
@@ -1185,7 +1078,7 @@ try {
                         </style>
                         ${printContent}
                     `;
-                    
+
                     window.print();
                     document.body.innerHTML = originalContent;
                     location.reload();
@@ -1204,14 +1097,38 @@ try {
                 }
             });
 
-            // Initialize infinite scroll
+
             createInfiniteScroll();
             window.addEventListener('scroll', handleScroll);
 
-            // Load initial content
+
             loadMoreExamResults();
             loadMoreFeeResults();
         });
+		
+
+		
     </script>
+	
+	
+	
+	  <div id="resolution">Resolution: 0 x 0</div>
+
+  <script>
+    function updateResolution() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      document.getElementById('resolution').textContent = `Resolution: ${width} x ${height}`;
+    }
+
+ 
+    updateResolution();
+
+   
+    window.addEventListener('resize', updateResolution);
+  </script>
+	
+	
+	
 </body>
 </html>

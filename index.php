@@ -76,11 +76,81 @@
             height: auto;
             object-fit: contain;
         }
+        @media (max-width: 768px) {
+            .login-container {
+                margin: 1rem;
+                max-width: calc(100vw - 2rem);
+            }
+            .flex.min-h-\[600px\] {
+                flex-direction: column;
+                min-height: auto;
+                padding: 1rem 0;
+            }
+            .w-1\/4, .w-2\/4 {
+                width: 100%;
+                padding: 0.5rem;
+            }
+            .illustration-img {
+                max-width: 8rem;
+                max-height: 8rem;
+                margin: 0.5rem 0;
+            }
+            .w-full.max-w-md {
+                max-width: 100%;
+                margin: 0.5rem 0;
+            }
+            header {
+                padding: 1rem;
+            }
+            header h1 {
+                font-size: 1rem;
+            }
+            .welcome-header h2 {
+                font-size: 1.5rem;
+            }
+            .welcome-header p {
+                font-size: 0.75rem;
+            }
+        }
+
         @media (max-width: 640px) {
             .illustration-img {
-                max-width: 12rem;
-                max-height: 12rem;
+                max-width: 6rem;
+                max-height: 6rem;
             }
+            .login-container {
+                margin: 0.5rem;
+                border-radius: 0.5rem;
+            }
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .flex.items-center {
+                flex-direction: row;
+            }
+            .welcome-header {
+                padding: 1.5rem 1rem;
+            }
+            .bg-white.p-8 {
+                padding: 1.5rem;
+            }
+            input {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+        }
+
+        /* Touch-friendly button sizing */
+        button {
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+
+        /* Better input focus for mobile */
+        input:focus {
+            outline: 2px solid #8A2BE2;
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -96,12 +166,19 @@
         </header>
 
         <div class="flex min-h-[600px] relative">
-            <div class="bg-shape bg-shape-left w-72 h-72 bg-blue-100 rounded-full opacity-70"></div>
-            <div class="bg-shape bg-shape-right w-72 h-72 bg-blue-100 rounded-full opacity-70"></div>
-            <div class="w-1/4 flex items-center justify-center relative z-10">
-                <img src="images/left.png" class="illustration-img">
-            </div>
-            <div class="w-2/4 flex flex-col items-center justify-center relative z-10">
+          
+
+<div class="bg-shape bg-shape-left w-72 h-72 bg-blue-100 rounded-full opacity-70 hidden md:block"></div>
+
+<div class="bg-shape bg-shape-right w-72 h-72 bg-blue-100 rounded-full opacity-70 hidden md:block"></div>
+
+   
+   
+  <div class="w-1/4 flex items-center justify-center relative z-10 hidden md:flex">
+    <img src="images/left.png" class="illustration-img">
+</div>
+           <div class="w-full md:w-2/4 flex flex-col items-center justify-center relative z-10 p-8">
+
                 <div class="w-full max-w-md login-form-container border border-gray-200 rounded-lg shadow-md">
                     <div class="welcome-header text-white text-center p-8 rounded-t-lg">
                         <h2 class="text-3xl font-bold mb-4">WELCOME</h2>
@@ -121,9 +198,9 @@
                     </div>
                 </div>
             </div>
-            <div class="w-1/4 flex items-center justify-center relative z-10">
-                <img src="images/right.png" class="illustration-img">
-            </div>
+      <div class="w-1/4 flex items-center justify-center relative z-10 hidden md:flex">
+    <img src="images/right.png" class="illustration-img">
+</div>
         </div>
 
         <footer class="text-center py-4 text-gray-500 text-sm">
@@ -160,7 +237,7 @@
                 }
             })
             .catch(error => {
-                window.location.href = 'dashboard.php';
+                 errorDiv.textContent = 'Network error. Please try again.';
                 console.error('Error:', error);
             });
         }

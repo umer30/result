@@ -1,0 +1,350 @@
+
+        :root {
+            --primary: #4F46E5;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --dark: #1F2937;
+            --light: #F3F4F6;
+			--indigo: #4338ca; 
+        }
+
+        .bg-primary { background-color: var(--primary); }
+        .text-primary { color: var(--primary); }
+        .bg-secondary { background-color: var(--secondary); }
+        .text-secondary { color: var(--secondary); }
+        .bg-accent { background-color: var(--accent); }
+        .text-accent { color: var(--accent); }
+        .bg-dark { background-color: var(--dark); }
+        .text-dark { color: var(--dark); }
+		
+		
+		.bg-gradient-custom {
+  background: linear-gradient(to bottom right, var(--primary), var(--indigo));
+}
+
+.bg-modal-gradient {
+    background: linear-gradient(to bottom right, #4F46E5, #4338ca); /* primary to indigo */
+}
+
+.modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+#closeModalBtn i {
+    transition: transform 0.3s ease;
+}
+
+#closeModalBtn:hover i {
+    transform: rotate(90deg) scale(1.2);
+}
+		
+
+        .attendance-chart {
+            height: 300px;
+        }
+
+        .animate-gradient {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 6s ease infinite;
+        }
+
+        @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .modal {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 9999 !important;
+        }
+
+        .modal-hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+        }
+
+        .circle-bg {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .circle-bg::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 1000px;
+            height: 1000px;
+            background-image: repeating-radial-gradient(
+                circle,
+                rgba(255, 255, 255, 0.03) 1px,
+                transparent 10px
+            );
+            transform: translateX(-50%) translateY(-40%);
+            mask-image: linear-gradient(to bottom, transparent 0%, white 50%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, white 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .circle-bg > * {
+            position: relative;
+            z-index: 10;
+        }
+
+
+        button {
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+
+
+        .mobile-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+
+        .mobile-table-wrapper::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .mobile-table-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .mobile-table-wrapper::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        /* Responsive Grid */
+        @media (max-width: 1023px) {
+            .responsive-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Tablet and smaller screens */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
+
+            main {
+                padding: 0.5rem;
+            }
+
+            /* Header responsive */
+            header .flex {
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: center;
+            }
+
+            header h1 {
+                font-size: 1rem;
+                text-align: center;
+            }
+
+            /* Student profile responsive */
+            .student-profile .md\:flex {
+                flex-direction: column;
+            }
+
+            .student-profile .md\:w-1\/4,
+            .student-profile .md\:w-3\/4 {
+                width: 100%;
+            }
+
+            .student-details {
+                display: none;
+            }
+
+            .show-details-btn {
+                display: block;
+            }
+
+            /* Table responsive */
+            .overflow-x-auto table {
+                font-size: 0.75rem;
+            }
+
+            .overflow-x-auto th,
+            .overflow-x-auto td {
+                padding: 0.5rem 0.25rem;
+                white-space: nowrap;
+            }
+
+            .bg-white.rounded-xl {
+                margin-bottom: 1rem;
+                border-radius: 0.75rem;
+            }
+
+            .bg-white.p-6 {
+                padding: 1rem;
+            }
+
+            .attendance-chart {
+                height: 250px;
+            }
+        }
+
+        /* Mobile phones */
+        @media (max-width: 640px) {
+            body {
+                overflow-x: hidden;
+            }
+
+            main {
+                padding: 0.25rem;
+            }
+
+            .container {
+                padding-left: 0.25rem;
+                padding-right: 0.25rem;
+            }
+
+            /* Header mobile */
+            header .flex {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: center;
+                text-align: center;
+            }
+
+            header h1 {
+                font-size: 0.875rem;
+            }
+
+            header .flex.items-center.space-x-2 {
+                flex-direction: column;
+                space-x: 0;
+                gap: 0.5rem;
+            }
+
+            header .flex.items-center.space-x-2.sm\:space-x-4 {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            /* Student profile mobile */
+            .student-profile .md\:flex {
+                flex-direction: column;
+            }
+
+            .student-profile .md\:w-1\/4,
+            .student-profile .md\:w-3\/4 {
+                width: 100%;
+            }
+
+            .w-32.h-32 {
+                width: 5rem;
+                height: 5rem;
+            }
+
+            /* Performance cards mobile */
+            .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+
+            /* Table mobile */
+            .overflow-x-auto table {
+                font-size: 0.625rem;
+            }
+
+            .overflow-x-auto th,
+            .overflow-x-auto td {
+                padding: 0.25rem 0.125rem;
+                min-width: 50px;
+            }
+
+            .mobile-hide {
+                display: none;
+            }
+
+            /* Modal mobile */
+            .max-w-lg {
+                max-width: calc(100vw - 1rem);
+                margin: 0.5rem;
+            }
+
+            .max-w-6xl {
+                max-width: calc(100vw - 1rem);
+                margin: 0.5rem;
+            }
+
+            /* Text sizes mobile */
+            .text-lg {
+                font-size: 1rem;
+            }
+
+            .text-xl {
+                font-size: 1.125rem;
+            }
+
+            .text-2xl {
+                font-size: 1.25rem;
+            }
+
+            .attendance-chart {
+                height: 200px;
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .text-base {
+                font-size: 0.875rem;
+            }
+
+            .text-sm {
+                font-size: 0.75rem;
+            }
+
+            .text-xs {
+                font-size: 0.625rem;
+            }
+
+            /* Hide extra table columns on very small screens */
+            .overflow-x-auto th:nth-child(n+6),
+            .overflow-x-auto td:nth-child(n+6) {
+                display: none;
+            }
+
+            header h1 {
+                font-size: 0.75rem;
+            }
+
+            .w-32.h-32 {
+                width: 4rem;
+                height: 4rem;
+            }
+        }
+
+        /* Desktop and larger screens */
+        @media (min-width: 769px) {
+            .student-details {
+                display: block !important;
+            }
+
+            .show-details-btn {
+                display: none !important;
+            }
+        }
